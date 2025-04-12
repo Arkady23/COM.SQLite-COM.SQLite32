@@ -43,3 +43,8 @@ C:\Windows\Microsoft.NET\Framework\v4.0.30319\regasm.exe D:\VFP\VFP9\sqlite32.ne
 ```
 C:\Windows\Microsoft.NET\Framework\v4.0.30319\regasm.exe D:\VFP\VFP9\sqlite32.net.dll /unregister
 ```
+## Создание объекта COM.SQLite
+Текст кода на VFP:
+```
+oMem = CreateObject('COM.SQLite')
+```
