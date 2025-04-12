@@ -69,3 +69,9 @@ SQLite = CreateObject('COM.SQLite')
 Метод возвращает 0, если сформирована подготовленная SQL-запросом строка, если строк больше нет, метод возвращает -1.
 ## Метод Close()
 Метод возвращает 0, если БД успешно закрыта, иначе — код ошибки.
+## Примеры
+Пример на VFP. Создание таблицы и внесение данных:
+? SQLite=CreateO('COM.SQLite')
+? SQLite.Open('test.db')
+? SQLite.DoCmd("DROP TABLE IF EXISTS people; CREATE TABLE people(id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, age INTEGER);")
+? SQLite.DoCmd2("INSERT INTO people (name, age) VALUES (?, ?);",strconv("Аркадий",9),64)
