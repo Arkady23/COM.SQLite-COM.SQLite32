@@ -83,6 +83,8 @@ SQLite = CreateObject('COM.SQLite')
     "CREATE TABLE people(id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, age INTEGER)")
 
 * В запросе требуются два параметра со значениями:
-? SQLite.DoCmd2("INSERT INTO people (name, age) VALUES (?, ?);", Strconv("Аркадий",9), 64)
+? SQLite.DoCmd2("INSERT INTO people (name, age) VALUES (?, ?);", "Bill Gates", 69)
+? SQLite.DoCmd2("INSERT INTO people (name, age) VALUES (?, ?);", Strconv("Аркадий Корниенко",9), 64)
+? SQLite.DoCmd2("INSERT INTO people (name, age) VALUES (?, ?);", Richard Hipp, 64)
 ? SQLite.Close()
 ```
