@@ -79,5 +79,7 @@ SQLite = CreateObject('COM.SQLite')
 ? SQLite=CreateO('COM.SQLite')
 ? SQLite.Open('test.db')
 ? SQLite.DoCmd("DROP TABLE IF EXISTS people; CREATE TABLE people(id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, age INTEGER)")
+
+* В запросе требуются два параметра со значениями:
 ? SQLite.DoCmd2("INSERT INTO people (name, age) VALUES (?, ?);", Strconv("Аркадий",9), 64)
 ```
