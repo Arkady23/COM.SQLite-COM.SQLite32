@@ -76,7 +76,7 @@ SQLite = CreateObject('COM.SQLite')
 ## Примеры
 Пример на VFP. Создание таблицы и внесение данных:
 ```
-? SQLite=CreateO('COM.SQLite')
+? SQLite = CreateO('COM.SQLite')
 ? SQLite.Open('test.db')
 ? SQLite.DoCmd("DROP TABLE IF EXISTS people;"+ ;
     "CREATE TABLE people(id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, age INTEGER)")
