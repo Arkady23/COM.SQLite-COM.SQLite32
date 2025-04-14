@@ -88,3 +88,4 @@ SQLite = CreateObject('COM.SQLite')
 ? SQLite.DoCmd2("INSERT INTO people (name, age) VALUES (?, ?);", Richard Hipp, 64)
 ? SQLite.Close()
 ```
+То же самое, но в одном запросе и с использованием массива данных:
