@@ -76,7 +76,7 @@ SQLite = CreateObject('COM.SQLite')
 Метод возвращает 0, если БД успешно закрыта, иначе — код ошибки.
 ## Примеры на Visual FoxPro
 Создание таблицы и внесение данных:
-```
+```xbase
 ? SQLite = CreateO('COM.SQLite')
 ? SQLite.Open('test.db')
 ? SQLite.DoCmd("DROP TABLE IF EXISTS people;"+ ;
