@@ -3,9 +3,9 @@
 [Назначение](#Назначение)  
 [Регистрация COM.SQLite в реестре Windows](#Регистрация-COMSQLite-в-реестре-Windows)  
 [Создание объекта COM.SQLite](#Создание-объекта-COMSQLite)  
-[Метод Open(sql)](Метод-Opensql)  
-[Метод DoCmd(sql)](Метод-DoCmdsql)  
-[Группа методов с параметрами DoCmd1(sql, v1) —<br>DoCmd9(sql, v1, v2, v3, v4, v5, v6, v7, v8, v9)](Группа-методов-с-параметрами-DoCmd1sql-v1-DoCmd9sql-v1-v2-v3-v4-v5-v6-v7-v8-v9)  
+[Метод Open(sql)](#Метод-Opensql)  
+[Метод DoCmd(sql)](#Метод-DoCmdsql)  
+[Группа методов с параметрами DoCmd1(sql, v1) —<br>DoCmd9(sql, v1, v2, v3, v4, v5, v6, v7, v8, v9)](#Группа-методов-с-параметрами-DoCmd1sql-v1-DoCmd9sql-v1-v2-v3-v4-v5-v6-v7-v8-v9)  
 ### Назначение
 Библиотека sqlite.net.dll реализует COM-сервер для VFP9 или VFPA, который в принципе может использоваться и в любых других языках, поддерживающих COM технологию обмена данными.  
 
