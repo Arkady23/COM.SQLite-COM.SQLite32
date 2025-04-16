@@ -91,7 +91,9 @@ SQLite = CreateObject('COM.SQLite')
 То же самое, но в одном запросе и с использованием массива данных:
 ```xbase
 ? SQLite = CreateO('COM.SQLite')
-? SQLite.Open('test.db')
+
+* Указываем тип массива параметров с нулевого элемента для COM-объекта SQLite:
+ComArray(SQLite,10)
 
 * Формируем массив параметров размером в 6 элементов:
 dime vals(6)
@@ -102,9 +104,7 @@ vals(4)=64
 vals(5)=Strconv("Аркадий Корниенко",9)
 vals(6)=64
 
-* Указываем тип массива с нулевого элемента для COM-объекта SQLite:
-ComArray(SQLite,10)
-
+? SQLite.Open('test.db')
 ? SQLite.DoCmd("DROP TABLE IF EXISTS people;"+ ;
     "CREATE TABLE people(id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, age INTEGER);"+ ;
     "INSERT INTO people (name, age) VALUES (?, ?);"+ ;
