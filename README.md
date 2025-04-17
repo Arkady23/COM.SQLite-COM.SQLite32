@@ -105,7 +105,7 @@ vals(5)=Strconv("Аркадий Корниенко",9)
 vals(6)=64
 
 ? SQLite.Open('test.db')
-? SQLite.DoCmd("DROP TABLE IF EXISTS people;"+ ;
+? SQLite.DoCmdN("DROP TABLE IF EXISTS people;"+ ;
     "CREATE TABLE people(id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, age INTEGER);"+ ;
     "INSERT INTO people (name, age) VALUES (?, ?);"+ ;
     "INSERT INTO people (name, age) VALUES (?, ?);"+ ;
