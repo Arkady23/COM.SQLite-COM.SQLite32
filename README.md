@@ -74,6 +74,7 @@ SQLite = CreateObject('COM.SQLite32')
 ## Метод Close()
 Метод возвращает 0, если БД успешно закрыта, иначе — код ошибки.
 ## Примеры на Visual FoxPro
+В примере приведено создание таблицы, разные варианты добавления записей и резервирование с уплотнением БД.
 ```xbase
 * ТЕСТЫ РАБОТЫ С ОБЪЕКТОМ COM.SQLite
   ? "Тест 1: " + tran(Test1())
@@ -118,7 +119,6 @@ FUNCTION Test1
 
 RETURN 0
 
-
 FUNCTION Test2
   local ret
   SQLite = CreateO('COM.SQLite')
@@ -154,7 +154,6 @@ FUNCTION Test2
      endif
 
 RETURN 0
-
 
 FUNCTION Test3
   local ret
@@ -198,7 +197,6 @@ FUNCTION Test3
      endif
 
 RETURN 0
-
 
 * СЖАТИЕ И КОПИРОВАНИЕ БД
 FUNCTION Test4
