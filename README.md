@@ -112,3 +112,27 @@ vals(6)=64
     @vals)
 ? SQLite.Close()
 ```
+То же самое, но с параметрами и в рамках транзакции:
+```xbase
+? SQLite = CreateO('COM.SQLite')
+? SQLite.Open('test.db')
+
+* Использование транзакции при выполнении нескольких SQL-комманд:
+? SQLite.DoCmd("BEGIN TRANSACTION;")
+
+IF SQLite.DoCmd("DROP TABLE IF EXISTS people;"+ ;
+    "CREATE TABLE people(id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, age INTEGER);"+ ;
+    "INSERT INTO people (name, age) VALUES (?, ?);"+ ;
+    "INSERT INTO people (name, age) VALUES (?, ?);"+ ;
+    "INSERT INTO people (name, age) VALUES (?, ?);", ;
+    "Bill Gates", 69, "Richard Hipp", 64, ;
+    Strconv("Аркадий Корниенко",9), 64) = 0
+  IF SQLite.DoCmd("COMMIT;") = 0
+    ? "Успех"
+ELSE
+  ? SQLite.DoCmd("ROLLBACK;")
+  ? "Неудача"
+ENDIF
+
+? SQLite.Close()
+```
