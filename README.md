@@ -74,68 +74,161 @@ SQLite = CreateObject('COM.SQLite32')
 ## Метод Close()
 Метод возвращает 0, если БД успешно закрыта, иначе — код ошибки.
 ## Примеры на Visual FoxPro
-Создание таблицы и внесение данных:
 ```xbase
-? SQLite = CreateO('COM.SQLite')
-? SQLite.Open('test.db')
-? SQLite.DoCmd("DROP TABLE IF EXISTS people;"+ ;
-    "CREATE TABLE people(id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, age INTEGER)")
+* ТЕСТЫ РАБОТЫ С ОБЪЕКТОМ COM.SQLite
+  ? "Тест 1: " + tran(Test1())
+  ? "Тест 2: " + tran(Test2())
+  ? "Тест 3: " + tran(Test3())
+  ? "Тест 4: " + tran(Test4())
 
-* В запросе требуются два параметра со значениями:
-? SQLite.DoCmd("INSERT INTO people (name, age) VALUES (?, ?)", "Bill Gates", 69)
-? SQLite.DoCmd("INSERT INTO people (name, age) VALUES (?, ?)", "Richard Hipp", 64)
-? SQLite.DoCmd("INSERT INTO people (name, age) VALUES (?, ?)", Strconv("Аркадий Корниенко",9), 64)
-? SQLite.Close()
-```
-То же самое, но в одном запросе и с использованием массива данных:
-```xbase
-? SQLite = CreateO('COM.SQLite')
 
-* Указываем тип массива параметров с нулевого элемента для COM-объекта SQLite:
-ComArray(SQLite,10)
+func Test1
+  local ret
+  SQLite = CreateO('COM.SQLite')
 
-* Формируем массив параметров размером в 6 элементов:
-dime vals(6)
-vals(1)="Bill Gates"
-vals(2)=69
-vals(3)="Richard Hipp"
-vals(4)=64
-vals(5)=Strconv("Аркадий Корниенко",9)
-vals(6)=64
+  ret = SQLite.Open('test.db')
+     if ret<>0
+        return 1
+     endif
+  ret = SQLite.DoCmd("DROP TABLE IF EXISTS people;"+ ;
+        "CREATE TABLE people(id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, age INTEGER)")
+     if ret<>0
+        return 2
+     endif
 
-? SQLite.Open('test.db')
-? SQLite.DoCmdN("DROP TABLE IF EXISTS people;"+ ;
-    "CREATE TABLE people(id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, age INTEGER);"+ ;
-    "INSERT INTO people (name, age) VALUES (?, ?);"+ ;
-    "INSERT INTO people (name, age) VALUES (?, ?);"+ ;
-    "INSERT INTO people (name, age) VALUES (?, ?);", ;
-    @vals)
-? SQLite.Close()
-```
-То же самое, но с параметрами и в рамках транзакции:
-```xbase
-? SQLite = CreateO('COM.SQLite')
-? SQLite.Open('test.db')
+  * В запросе требуются два параметра со значениями:
+  ret = SQLite.DoCmd("INSERT INTO people (name, age) VALUES (?, ?)", "Bill Gates", 69)
+     if ret<>0
+        return 3
+     endif
 
-* Использование транзакции при выполнении нескольких SQL-комманд:
-? SQLite.DoCmd("BEGIN TRANSACTION;")
+  * Другие записи:
+  ret = SQLite.DoCmd("INSERT INTO people (name, age) VALUES (?, ?)", "Richard Hipp", 64)
+     if ret<>0
+        return 4
+     endif
+  ret = SQLite.DoCmd("INSERT INTO people (name, age) VALUES (?, ?)", ;
+        Strconv("Аркадий Корниенко",9), 64)
+     if ret<>0
+        return 5
+     endif
+  ret = SQLite.Close()
+     if ret<>0
+        return 5
+     endif
 
-IF SQLite.DoCmd("DROP TABLE IF EXISTS people;"+ ;
-    "CREATE TABLE people(id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, age INTEGER);"+ ;
-    "INSERT INTO people (name, age) VALUES (?, ?);"+ ;
-    "INSERT INTO people (name, age) VALUES (?, ?);"+ ;
-    "INSERT INTO people (name, age) VALUES (?, ?);", ;
-    "Bill Gates", 69, "Richard Hipp", 64, ;
-    Strconv("Аркадий Корниенко",9), 64) = 0
-  IF SQLite.DoCmd("COMMIT;") = 0
-    ? "Успех"
-  ELSE
-    ? "Аварийная ситуация"
-  ENDIF
-ELSE
-  ? SQLite.DoCmd("ROLLBACK;")
-  ? "Неудача"
-ENDIF
+return 0
 
-? SQLite.Close()
+
+func Test2
+  local ret
+  SQLite = CreateO('COM.SQLite')
+
+  * Указываем тип массива параметров с нулевого элемента для COM-объекта SQLite:
+  ComArray(SQLite,10)
+
+  * Формируем массив параметров размером в 6 элементов:
+  dime vals(6)
+  vals(1)="Bill Gates"
+  vals(2)=69
+  vals(3)="Richard Hipp"
+  vals(4)=64
+  vals(5)=Strconv("Аркадий Корниенко",9)
+  vals(6)=64
+
+  ret = SQLite.Open('test.db')
+     if ret<>0
+        return 6
+     endif
+  ret = SQLite.DoCmdN("DROP TABLE IF EXISTS people;"+ ;
+        "CREATE TABLE people(id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, age INTEGER);"+ ;
+        "INSERT INTO people (name, age) VALUES (?, ?);"+ ;
+        "INSERT INTO people (name, age) VALUES (?, ?);"+ ;
+        "INSERT INTO people (name, age) VALUES (?, ?);", ;
+        @vals)
+     if ret<>0
+        return 7
+     endif
+  ret = SQLite.Close()
+     if ret<>0
+        return 8
+     endif
+
+return 0
+
+
+func Test3
+  local ret
+  SQLite = CreateO('COM.SQLite')
+
+  ret = SQLite.Open('test.db')
+     if ret<>0
+        return 9
+     endif
+
+  * Использование транзакции при выполнении нескольких SQL-комманд:
+  ret = SQLite.DoCmd("BEGIN TRANSACTION;")
+     if ret<>0
+        return 10
+     endif
+
+  ret = SQLite.DoCmd("DROP TABLE IF EXISTS people;"+ ;
+        "CREATE TABLE people(id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, age INTEGER);"+ ;
+        "INSERT INTO people (name, age) VALUES (?, ?);"+ ;
+        "INSERT INTO people (name, age) VALUES (?, ?);"+ ;
+        "INSERT INTO people (name, age) VALUES (?, ?);", ;
+        "Bill Gates", 69, "Richard Hipp", 64, ;
+        Strconv("Аркадий Корниенко",9), 64)
+     if ret<>0
+        return 11
+     endif
+
+  ret = SQLite.DoCmd("COMMIT;")
+     if ret<>0
+        return 12
+     endif
+
+  ret = SQLite.DoCmd("ROLLBACK;")
+     if ret<>0
+        return 13
+     endif
+
+  ret = SQLite.Close()
+     if ret<>0
+        return 14
+     endif
+
+return 0
+
+
+* СЖАТИЕ И КОПИРОВАНИЕ БД
+func Test4
+  local ret
+  SQLite = CreateO('COM.SQLite')
+  bak = 'sqlite.test.db.bak'
+  backup = 'sqlite.test.db'
+
+  if(file(m.bak))
+     dele file (m.bak)
+  endif
+  if(file(m.backup))
+     rena (m.backup) to (m.bak)
+  endif
+
+  ret = SQLite.Open('test.db')
+     if ret<>0
+        return 15
+     endif
+
+  ret = SQLite.DoCmd("VACUUM INTO ?",m.backup)
+     if ret<>0
+        return 16
+     endif
+
+  ret = SQLite.Close()
+     if ret<>0
+        return 17
+     endif
+
+return 0
 ```
