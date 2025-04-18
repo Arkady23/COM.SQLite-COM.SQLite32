@@ -1,15 +1,15 @@
 # COM.SQLite — sqlite.net.dll
 ### Оглавление
 [Назначение](#Назначение)  
-[Регистрация COM.SQLite в реестре Windows](#Регистрация-COMSQLite-в-реестре-Windows)
-[Создание объекта COM.SQLite](#Создание-объекта-COMSQLite)
-[Метод Open(file, readonly)](#Метод-Openfile-readonly)
-[Метод DoCmd(sql)](#Метод-DoCmdsql)
-[Метод DoCmdN(sql, @vals)](#Метод-DoCmdNsql-vals)
-[Метод Next()](#Метод-Next)
-[Метод Eof()](#Метод-Eof)
-[Метод Close()](#Метод-Close)
-[Примеры на Visual FoxPro](#Примеры-на-Visual-FoxPro)
+[Регистрация COM.SQLite в реестре Windows](#Регистрация-COMSQLite-в-реестре-Windows)  
+[Создание объекта COM.SQLite](#Создание-объекта-COMSQLite)  
+[Метод Open(file, readonly)](#Метод-Openfile-readonly)  
+[Метод DoCmd(sql)](#Метод-DoCmdsql)  
+[Метод DoCmdN(sql, @vals)](#Метод-DoCmdNsql-vals)  
+[Метод Next()](#Метод-Next)  
+[Метод Eof()](#Метод-Eof)  
+[Метод Close()](#Метод-Close)  
+[Примеры на Visual FoxPro](#Примеры-на-Visual-FoxPro)  
 ### Назначение
 Библиотека sqlite.net.dll реализует COM-сервер для VFP9 или VFPA, который в принципе может использоваться и в любых других языках, поддерживающих COM технологию обмена данными.  
 
