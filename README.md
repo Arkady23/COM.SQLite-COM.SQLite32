@@ -129,6 +129,9 @@ IF SQLite.DoCmd("DROP TABLE IF EXISTS people;"+ ;
     Strconv("Аркадий Корниенко",9), 64) = 0
   IF SQLite.DoCmd("COMMIT;") = 0
     ? "Успех"
+  ELSE
+    ? "Аварийная ситуация"
+  ENDIF
 ELSE
   ? SQLite.DoCmd("ROLLBACK;")
   ? "Неудача"
