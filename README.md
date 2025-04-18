@@ -1,8 +1,8 @@
 # COM.SQLite и COM.SQLite32
 ### Оглавление
 [Назначение](#Назначение)  
-[Регистрация COM.SQLite и COM.SQLite32 в реестре Windows](#Регистрация-COMSQLite-и-COM.SQLite32-в-реестре-Windows)  
-[Создание объекта COM.SQLite и COM.SQLite32](#Создание-объекта-COMSQLite-и-COM.SQLite32)  
+[Регистрация COM.SQLite и COM.SQLite32 в реестре Windows](#Регистрация-COMSQLite-и-COMSQLite32-в-реестре-Windows)  
+[Создание объекта COM.SQLite и COM.SQLite32](#Создание-объекта-COMSQLite-и-COMSQLite32)  
 [Метод Open(file, readonly)](#Метод-Openfile-readonly)  
 [Метод DoCmd(sql[, v1[, v2[, v3[, v4[, v5[, v6[, v7[, v8[, v9[, v10]]]]]]]]]])](#Метод-DoCmdsql-v1-v2-v3-v4-v5-v6-v7-v8-v9-v10)  
 [Метод DoCmdN(sql, @vals)](#Метод-DoCmdNsql-vals)  
