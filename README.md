@@ -4,7 +4,7 @@
 [Регистрация COM.SQLite в реестре Windows](#Регистрация-COMSQLite-в-реестре-Windows)  
 [Создание объекта COM.SQLite](#Создание-объекта-COMSQLite)  
 [Метод Open(file, readonly)](#Метод-Openfile-readonly)  
-[Метод DoCmd(sql)](#Метод-DoCmdsql)  
+[Метод DoCmd(sql)](#Метод-DoCmdsql-v1-v2-v3-v4-v5-v6-v7-v8-v9-v10)  
 [Метод DoCmdN(sql, @vals)](#Метод-DoCmdNsql-vals)  
 [Метод Next()](#Метод-Next)  
 [Метод Eof()](#Метод-Eof)  
