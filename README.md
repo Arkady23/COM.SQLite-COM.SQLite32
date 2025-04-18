@@ -203,9 +203,37 @@ FUNCTION Test3
 
 RETURN 0
 
+* ВЫВОД ЗАПИСЕЙ
+* OUTPUT OF RECORDS
+FUNCTION Test4
+  local ret
+  SQLite = CreateO('COM.SQLite')
+
+  ret = SQLite.Open('test.db')
+     if ret<>0
+        return 15
+     endif
+
+  ret = SQLite.DoCmd("SELECT * FROM people")
+     if ret<>0
+        return 16
+     endif
+     do while SQLite.Eof()=0
+        arec = SQLite.Next()
+        ? tran(arec(1))+" | "+Strconv(arec(2),11)+" | "+tran(arec(3))
+     enddo
+     ?
+
+  ret = SQLite.Close()
+     if ret<>0
+        return 17
+     endif
+
+RETURN 0
+
 * СЖАТИЕ И КОПИРОВАНИЕ БД
 * COMPRESSION AND COPYING OF THE DB
-FUNCTION Test4
+FUNCTION Test5
   local ret
   SQLite = CreateO('COM.SQLite')
   bak = 'sqlite.test.db.bak'
@@ -220,17 +248,17 @@ FUNCTION Test4
 
   ret = SQLite.Open('test.db')
      if ret<>0
-        return 15
+        return 18
      endif
 
   ret = SQLite.DoCmd("VACUUM INTO ?",m.backup)
      if ret<>0
-        return 16
+        return 19
      endif
 
   ret = SQLite.Close()
      if ret<>0
-        return 17
+        return 20
      endif
 
 RETURN 0
