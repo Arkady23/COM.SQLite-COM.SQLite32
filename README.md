@@ -77,10 +77,11 @@ SQLite = CreateObject('COM.SQLite32')
 В примере приведено создание таблицы, разные варианты добавления записей и резервирование с уплотнением БД.
 ```xbase
 * ТЕСТЫ РАБОТЫ С ОБЪЕКТОМ COM.SQLite
-  ? "Тест 1: " + tran(Test1())
-  ? "Тест 2: " + tran(Test2())
-  ? "Тест 3: " + tran(Test3())
-  ? "Тест 4: " + tran(Test4())
+* TESTS OF WORKING WITH THE OBJECT COM.SQLite
+  ? "Test 1: " + tran(Test1())
+  ? "Test 2: " + tran(Test2())
+  ? "Test 3: " + tran(Test3())
+  ? "Test 4: " + tran(Test4())
 
 FUNCTION Test1
   local ret
@@ -97,12 +98,14 @@ FUNCTION Test1
      endif
 
   * В запросе требуются два параметра со значениями:
+  * The request requires two parameters with values:
   ret = SQLite.DoCmd("INSERT INTO people (name, age) VALUES (?, ?)", "Bill Gates", 69)
      if ret<>0
         return 3
      endif
 
   * Другие записи:
+  * Other records:
   ret = SQLite.DoCmd("INSERT INTO people (name, age) VALUES (?, ?)", "Richard Hipp", 64)
      if ret<>0
         return 4
@@ -124,9 +127,11 @@ FUNCTION Test2
   SQLite = CreateO('COM.SQLite')
 
   * Указываем тип массива параметров с нулевого элемента для COM-объекта SQLite:
+  * Specify the parameter array type with a zero element for the SQLite COM object:
   ComArray(SQLite,10)
 
   * Формируем массив параметров размером в 6 элементов:
+  * We form an array of parameters with a size of 6 elements:
   dime vals(6)
   vals(1)="Bill Gates"
   vals(2)=69
@@ -165,6 +170,7 @@ FUNCTION Test3
      endif
 
   * Использование транзакции при выполнении нескольких SQL-комманд:
+  * Using a Transaction When Executing Multiple SQL Statements:
   ret = SQLite.DoCmd("BEGIN TRANSACTION;")
      if ret<>0
         return 10
@@ -199,6 +205,7 @@ FUNCTION Test3
 RETURN 0
 
 * СЖАТИЕ И КОПИРОВАНИЕ БД
+* COMPRESSION AND COPYING OF THE DB
 FUNCTION Test4
   local ret
   SQLite = CreateO('COM.SQLite')
