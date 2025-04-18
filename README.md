@@ -184,15 +184,14 @@ FUNCTION Test3
         "Bill Gates", 69, "Richard Hipp", 64, ;
         Strconv("Аркадий Корниенко",9), 64)
      if ret<>0
-        return 11
-     endif
-
-  ret = SQLite.DoCmd("COMMIT;")
-     if ret<>0
+        ret = SQLite.DoCmd("ROLLBACK;")
+        if ret<>0
+           return 11
+        endif
         return 12
      endif
 
-  ret = SQLite.DoCmd("ROLLBACK;")
+  ret = SQLite.DoCmd("COMMIT;")
      if ret<>0
         return 13
      endif
