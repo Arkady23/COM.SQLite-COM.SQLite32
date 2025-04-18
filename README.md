@@ -82,6 +82,7 @@ SQLite = CreateObject('COM.SQLite32')
   ? "Test 2: " + tran(Test2())
   ? "Test 3: " + tran(Test3())
   ? "Test 4: " + tran(Test4())
+  ? "Test 5: " + tran(Test5())
 
 FUNCTION Test1
   local ret
