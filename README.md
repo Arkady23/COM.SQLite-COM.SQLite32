@@ -113,7 +113,7 @@ vals(6)=64
 ? SQLite.Close()
 ```
 То же самое, но с параметрами и в рамках транзакции:
-```xbase
+```xbase```
 ? SQLite = CreateO('COM.SQLite')
 ? SQLite.Open('test.db')
 
