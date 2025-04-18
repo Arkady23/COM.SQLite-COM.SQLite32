@@ -32,9 +32,10 @@ Microsoft VFP имеет ограничение на размер файла Б�
 утилиты regasm.exe с ключом /codebase. Например:
 | Visual FoxPro |
 | --- |
-|```PowerShell |
-|C:\Windows\Microsoft.NET\Framework64\v4.0.30319\regasm.exe D:\VFP\VFPA\sqlite.net.dll /codebase |
-|``` |
+```PowerShell
+C:\Windows\Microsoft.NET\Framework64\v4.0.30319\regasm.exe D:\VFP\VFPA\sqlite.net.dll /codebase
+```
+| --- |
 Предварительно поместите файл sqlite.net.dll в удобную для вас папку, например, в папку, где находятся другие библиотеки
 Microsoft VFP.  
 
