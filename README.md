@@ -81,8 +81,7 @@ SQLite = CreateObject('COM.SQLite32')
   ? "Тест 3: " + tran(Test3())
   ? "Тест 4: " + tran(Test4())
 
-
-func Test1
+FUNCTION Test1
   local ret
   SQLite = CreateO('COM.SQLite')
 
@@ -117,10 +116,10 @@ func Test1
         return 5
      endif
 
-return 0
+RETURN 0
 
 
-func Test2
+FUNCTION Test2
   local ret
   SQLite = CreateO('COM.SQLite')
 
@@ -154,10 +153,10 @@ func Test2
         return 8
      endif
 
-return 0
+RETURN 0
 
 
-func Test3
+FUNCTION Test3
   local ret
   SQLite = CreateO('COM.SQLite')
 
@@ -198,11 +197,11 @@ func Test3
         return 14
      endif
 
-return 0
+RETURN 0
 
 
 * СЖАТИЕ И КОПИРОВАНИЕ БД
-func Test4
+FUNCTION Test4
   local ret
   SQLite = CreateO('COM.SQLite')
   bak = 'sqlite.test.db.bak'
@@ -230,5 +229,5 @@ func Test4
         return 17
      endif
 
-return 0
+RETURN 0
 ```
