@@ -124,7 +124,7 @@ FUNCTION Test1
      endif
   ret = SQLite.Close()
      if ret<>0
-        return 5
+        return 6
      endif
 
 RETURN 0
@@ -151,7 +151,7 @@ FUNCTION Test2
 
   ret = SQLite.Open('test.db')
      if ret<>0
-        return 6
+        return 7
      endif
   ret = SQLite.DoCmdN("DROP TABLE IF EXISTS people;"+ ;
         "CREATE TABLE people(id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, age INTEGER);"+ ;
@@ -160,11 +160,11 @@ FUNCTION Test2
         "INSERT INTO people (name, age) VALUES (?, ?);", ;
         @vals)
      if ret<>0
-        return 7
+        return 8
      endif
   ret = SQLite.Close()
      if ret<>0
-        return 8
+        return 9
      endif
 
 RETURN 0
@@ -177,14 +177,14 @@ FUNCTION Test3
 
   ret = SQLite.Open('test.db')
      if ret<>0
-        return 9
+        return 10
      endif
 
   * Использование транзакции при выполнении нескольких SQL-комманд:
   * Using a Transaction When Executing Multiple SQL Statements:
   ret = SQLite.DoCmd("BEGIN TRANSACTION;")
      if ret<>0
-        return 10
+        return 11
      endif
 
   ret = SQLite.DoCmd("DROP TABLE IF EXISTS people;"+ ;
@@ -197,19 +197,19 @@ FUNCTION Test3
      if ret<>0
         ret = SQLite.DoCmd("ROLLBACK;")
         if ret<>0
-           return 11
+           return 12
         endif
-        return 12
+        return 13
      endif
 
   ret = SQLite.DoCmd("COMMIT;")
      if ret<>0
-        return 13
+        return 14
      endif
 
   ret = SQLite.Close()
      if ret<>0
-        return 14
+        return 15
      endif
 
 RETURN 0
@@ -222,12 +222,12 @@ FUNCTION Test4
 
   ret = SQLite.Open('test.db')
      if ret<>0
-        return 15
+        return 16
      endif
 
   ret = SQLite.DoCmd("SELECT * FROM people")
      if ret<>0
-        return 16
+        return 17
      endif
      do while SQLite.Eof()=0
         arec = SQLite.Next()
@@ -237,7 +237,7 @@ FUNCTION Test4
 
   ret = SQLite.Close()
      if ret<>0
-        return 17
+        return 18
      endif
 
 RETURN 0
@@ -259,17 +259,17 @@ FUNCTION Test5
 
   ret = SQLite.Open('test.db')
      if ret<>0
-        return 18
+        return 19
      endif
 
   ret = SQLite.DoCmd("VACUUM INTO ?",m.backup)
      if ret<>0
-        return 19
+        return 20
      endif
 
   ret = SQLite.Close()
      if ret<>0
-        return 20
+        return 21
      endif
 
 RETURN 0
