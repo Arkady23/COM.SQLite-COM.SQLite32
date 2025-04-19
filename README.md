@@ -249,17 +249,17 @@ FUNCTION Test5
   bak = 'sqlite.test.db.bak'
   backup = 'sqlite.test.db'
 
+  ret = SQLite.Open('test.db')
+     if ret<>0
+        return 19
+     endif
+
   if(file(m.bak))
      dele file (m.bak)
   endif
   if(file(m.backup))
      rena (m.backup) to (m.bak)
   endif
-
-  ret = SQLite.Open('test.db')
-     if ret<>0
-        return 19
-     endif
 
   ret = SQLite.DoCmd("VACUUM INTO ?",m.backup)
      if ret<>0
