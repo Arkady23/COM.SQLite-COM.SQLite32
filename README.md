@@ -88,6 +88,8 @@ SQLite = CreateObject('COM.SQLite32')
   ? "Test 4: " + tran(Test4())
   ? "Test 5: " + tran(Test5())
 
+* СОЗДАНИЕ ТАБЛИЦЫ И ДОБАВЛЕНИЕ ЗАПИСЕЙ
+* CREATING A TABLE AND ADDING RECORDS
 FUNCTION Test1
   local ret
   SQLite = CreateO('COM.SQLite')
@@ -127,6 +129,8 @@ FUNCTION Test1
 
 RETURN 0
 
+* ТОЖЕ САМОЕ, НО С ИСПОЛЬЗОВАНИЕМ МАССИВА ПАРАМЕТРОВ
+* THE SAME, BUT USING AN ARRAY OF PARAMETERS
 FUNCTION Test2
   local ret
   SQLite = CreateO('COM.SQLite')
@@ -165,6 +169,8 @@ FUNCTION Test2
 
 RETURN 0
 
+* ТОЖЕ САМОЕ НО С ИСПОЛЬЗОВАНИЕМ ТРАНЗАКЦИИ
+* THE SAME BUT USING A TRANSACTION
 FUNCTION Test3
   local ret
   SQLite = CreateO('COM.SQLite')
