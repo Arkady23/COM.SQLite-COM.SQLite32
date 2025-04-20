@@ -90,48 +90,43 @@ SQLite = CreateObject('COM.SQLite32')
 * СОЗДАНИЕ ТАБЛИЦЫ И ДОБАВЛЕНИЕ ЗАПИСЕЙ
 * CREATING A TABLE AND ADDING RECORDS
 FUNCTION Test1
-  local ret
   SQLite = CreateO('COM.SQLite')
 
-  ret = SQLite.Open('test.db')
-     if ret<>0
-        return 1
-     endif
-  ret = SQLite.DoCmd("DROP TABLE IF EXISTS people;"+ ;
-        "CREATE TABLE people(id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, age INTEGER)")
-     if ret<>0
-        return 2
-     endif
+  if SQLite.Open('test.db')<>0
+     return 1
+  endif
+  if SQLite.DoCmd("DROP TABLE IF EXISTS people;"+        ;
+           "CREATE TABLE people(id INTEGER PRIMARY KEY"+ ;
+           " AUTOINCREMENT, name TEXT, age INTEGER)")<>0
+     return 2
+  endif
 
   * В запросе требуются два параметра со значениями:
   * The request requires two parameters with values:
-  ret = SQLite.DoCmd("INSERT INTO people (name, age) VALUES (?, ?)", "Bill Gates", 69)
-     if ret<>0
-        return 3
-     endif
+  if SQLite.DoCmd("INSERT INTO people (name, age) VALUES (?, ?)", ;
+           "Bill Gates", 69)<>0
+     return 3
+  endif
 
   * Другие записи:
   * Other records:
-  ret = SQLite.DoCmd("INSERT INTO people (name, age) VALUES (?, ?)", "Richard Hipp", 64)
-     if ret<>0
-        return 4
-     endif
-  ret = SQLite.DoCmd("INSERT INTO people (name, age) VALUES (?, ?)", ;
-        Strconv("Аркадий Корниенко",9), 64)
-     if ret<>0
-        return 5
-     endif
-  ret = SQLite.Close()
-     if ret<>0
-        return 6
-     endif
+  if SQLite.DoCmd("INSERT INTO people (name, age) VALUES (?, ?)", ;
+           "Richard Hipp", 64)<>0
+     return 4
+  endif
+  if SQLite.DoCmd("INSERT INTO people (name, age) VALUES (?, ?)", ;
+          Strconv("Аркадий Корниенко",9), 64)<>0
+     return 5
+  endif
+  if SQLite.Close()<>0
+     return 6
+  endif
 
 RETURN 0
 
 * ТОЖЕ САМОЕ, НО С ИСПОЛЬЗОВАНИЕМ МАССИВА ПАРАМЕТРОВ
 * THE SAME, BUT USING AN ARRAY OF PARAMETERS
 FUNCTION Test2
-  local ret
   SQLite = CreateO('COM.SQLite')
 
   * Указываем тип массива параметров с нулевого элемента для COM-объекта SQLite:
@@ -148,111 +143,97 @@ FUNCTION Test2
   vals(5)=Strconv("Аркадий Корниенко",9)
   vals(6)=64
 
-  ret = SQLite.Open('test.db')
-     if ret<>0
-        return 7
-     endif
-  ret = SQLite.DoCmdN("DROP TABLE IF EXISTS people;"+ ;
-        "CREATE TABLE people(id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, age INTEGER);"+ ;
+  if SQLite.Open('test.db')<>0
+     return 7
+  endif
+  if SQLite.DoCmdN("DROP TABLE IF EXISTS people;"+       ;
+        "CREATE TABLE people(id INTEGER PRIMARY KEY"+    ;
+        " AUTOINCREMENT, name TEXT, age INTEGER);"+      ;
         "INSERT INTO people (name, age) VALUES (?, ?);"+ ;
         "INSERT INTO people (name, age) VALUES (?, ?);"+ ;
         "INSERT INTO people (name, age) VALUES (?, ?);", ;
-        @vals)
-     if ret<>0
-        return 8
-     endif
-  ret = SQLite.Close()
-     if ret<>0
-        return 9
-     endif
+        @vals)<>0
+     return 8
+  endif
+  if SQLite.Close()<>0
+     return 9
+  endif
 
 RETURN 0
 
 * ТОЖЕ САМОЕ НО С ИСПОЛЬЗОВАНИЕМ ТРАНЗАКЦИИ
 * THE SAME BUT USING A TRANSACTION
 FUNCTION Test3
-  local ret
   SQLite = CreateO('COM.SQLite')
 
-  ret = SQLite.Open('test.db')
-     if ret<>0
-        return 10
-     endif
+  if SQLite.Open('test.db')<>0
+     return 10
+  endif
 
   * Использование транзакции при выполнении нескольких SQL-комманд:
   * Using a Transaction When Executing Multiple SQL Statements:
-  ret = SQLite.DoCmd("BEGIN TRANSACTION;")
-     if ret<>0
-        return 11
-     endif
+  if SQLite.DoCmd("BEGIN TRANSACTION;")<>0
+     return 11
+  endif
 
-  ret = SQLite.DoCmd("DROP TABLE IF EXISTS people;"+ ;
-        "CREATE TABLE people(id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, age INTEGER);"+ ;
+  if SQLite.DoCmd("DROP TABLE IF EXISTS people;"+        ;
+        "CREATE TABLE people(id INTEGER PRIMARY KEY"+    ;
+        " AUTOINCREMENT, name TEXT, age INTEGER);"+      ;
         "INSERT INTO people (name, age) VALUES (?, ?);"+ ;
         "INSERT INTO people (name, age) VALUES (?, ?);"+ ;
         "INSERT INTO people (name, age) VALUES (?, ?);", ;
         "Bill Gates", 69, "Richard Hipp", 64, ;
-        Strconv("Аркадий Корниенко",9), 64)
-     if ret<>0
-        ret = SQLite.DoCmd("ROLLBACK;")
-        if ret<>0
-           return 12
-        endif
-        return 13
+        Strconv("Аркадий Корниенко",9), 64)<>0
+     if SQLite.DoCmd("ROLLBACK;")<>0
+        return 12
      endif
+     return 13
+  endif
 
-  ret = SQLite.DoCmd("COMMIT;")
-     if ret<>0
-        return 14
-     endif
+  if SQLite.DoCmd("COMMIT;")<>0
+     return 14
+  endif
 
-  ret = SQLite.Close()
-     if ret<>0
-        return 15
-     endif
+  if SQLite.Close()<>0
+     return 15
+  endif
 
 RETURN 0
 
 * ВЫВОД ЗАПИСЕЙ
 * OUTPUT OF RECORDS
 FUNCTION Test4
-  local ret
   SQLite = CreateO('COM.SQLite')
 
-  ret = SQLite.Open('test.db')
-     if ret<>0
-        return 16
-     endif
+  if SQLite.Open('test.db')<>0
+     return 16
+  endif
 
-  ret = SQLite.DoCmd("SELECT * FROM people")
-     if ret<>0
-        return 17
-     endif
-     do while SQLite.Eof()=0
-        arec = SQLite.Next()
-        ? tran(arec(1))+" | "+Strconv(arec(2),11)+" | "+tran(arec(3))
-     enddo
-     ?
+  if SQLite.DoCmd("SELECT * FROM people")<>0
+     return 17
+  endif
+  do while SQLite.Eof()=0
+     arec = SQLite.Next()
+     ? tran(arec(1))+" | "+Strconv(arec(2),11)+" | "+tran(arec(3))
+  enddo
+  ?
 
-  ret = SQLite.Close()
-     if ret<>0
-        return 18
-     endif
+  if SQLite.Close()<>0
+     return 18
+  endif
 
 RETURN 0
 
 * СЖАТИЕ И КОПИРОВАНИЕ БД
 * COMPRESSION AND COPYING OF THE DB
 FUNCTION Test5
-  local ret
   SQLite = CreateO('COM.SQLite')
   bak = 'sqlite.test.db.bak'
   backup = 'sqlite.test.db'
 
-  ret = SQLite.Open('test.db')
-     if ret<>0
-        return 19
-     endif
+  if SQLite.Open('test.db')<>0
+     return 19
+  endif
 
   if(file(m.bak))
      dele file (m.bak)
@@ -261,15 +242,13 @@ FUNCTION Test5
      rena (m.backup) to (m.bak)
   endif
 
-  ret = SQLite.DoCmd("VACUUM INTO ?",m.backup)
-     if ret<>0
-        return 20
-     endif
+  if SQLite.DoCmd("VACUUM INTO ?",m.backup)<>0
+     return 20
+  endif
 
-  ret = SQLite.Close()
-     if ret<>0
-        return 21
-     endif
+  if SQLite.Close()<>0
+     return 21
+  endif
 
 RETURN 0
 ```
