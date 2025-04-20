@@ -235,10 +235,10 @@ FUNCTION Test5
      return 19
   endif
 
-  if(file(m.bak))
+  if file(m.bak)
      dele file (m.bak)
   endif
-  if(file(m.backup))
+  if file(m.backup)
      rena (m.backup) to (m.bak)
   endif
 
