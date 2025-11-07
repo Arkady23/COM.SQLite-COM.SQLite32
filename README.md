@@ -88,7 +88,8 @@ SQLite = CreateObject('COM.SQLite32')
 * СОЗДАНИЕ ТАБЛИЦЫ И ДОБАВЛЕНИЕ ЗАПИСЕЙ
 * CREATING A TABLE AND ADDING RECORDS
 FUNCTION Test1
-  SQLite = CreateO('COM.SQLite')
+  SQLite = CreateO('COM.SQLite32')
+*  SQLite = CreateO('COM.SQLite')
 
   if SQLite.Open('test.db')<>0
      return 1
@@ -125,7 +126,8 @@ RETURN 0
 * ТОЖЕ САМОЕ, НО С ИСПОЛЬЗОВАНИЕМ МАССИВА ПАРАМЕТРОВ
 * THE SAME, BUT USING AN ARRAY OF PARAMETERS
 FUNCTION Test2
-  SQLite = CreateO('COM.SQLite')
+  SQLite = CreateO('COM.SQLite32')
+*  SQLite = CreateO('COM.SQLite')
 
   * Указываем тип массива параметров с нулевого элемента для COM-объекта SQLite:
   * Specify the parameter array type with a zero element for the SQLite COM object:
@@ -162,7 +164,8 @@ RETURN 0
 * ТОЖЕ САМОЕ НО С ИСПОЛЬЗОВАНИЕМ ТРАНЗАКЦИИ
 * THE SAME BUT USING A TRANSACTION
 FUNCTION Test3
-  SQLite = CreateO('COM.SQLite')
+  SQLite = CreateO('COM.SQLite32')
+*  SQLite = CreateO('COM.SQLite')
 
   if SQLite.Open('test.db')<>0
      return 10
@@ -201,7 +204,7 @@ RETURN 0
 * ВЫВОД ЗАПИСЕЙ
 * OUTPUT OF RECORDS
 FUNCTION Test4
-  SQLite = CreateO('COM.SQLite')
+  SQLite = CreateO('COM.SQLite'+iif(sys(17)='Pentium','32',''))
 
   if SQLite.Open('test.db')<>0
      return 16
@@ -225,7 +228,7 @@ RETURN 0
 * СЖАТИЕ И КОПИРОВАНИЕ БД
 * COMPRESSION AND COPYING OF THE DB
 FUNCTION Test5
-  SQLite = CreateO('COM.SQLite')
+  SQLite = CreateO(iif(sys(17)='Pentium','COM.SQLite32','COM.SQLite'))
   bak = 'sqlite.test.db.bak'
   backup = 'sqlite.test.db'
 
