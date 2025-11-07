@@ -56,11 +56,15 @@ C:\Windows\Microsoft.NET\Framework\v4.0.30319\regasm.exe D:\VFP\VFP9\sqlite32.ne
 ## Создание объекта COM.SQLite и COM.SQLite32
 Текст кода на VFP:
 ```xBase
-SQLite = CreateObject('COM.SQLite')
+SQLite = CreateObject('COM.SQLite32')
 ```
 и
 ```xBase
-SQLite = CreateObject('COM.SQLite32')
+SQLite = CreateObject('COM.SQLite')
+```
+или универсальный вариант:
+```xBase
+SQLite = CreateObject('COM.SQLite'+iif(sys(17)='Pentium','32',''))
 ```
 ## Метод Open(file[, readonly])
 Вызов метода обеспечивает открытие БД SQLite с возможностью запись/чтение и создание БД, если она не существует, если логический параметр readonly ложь либо он не указан. Если значение второго параметра правда, то БД открывается только для чтения. Первым строковым параметром указыватся название файла БД вместе с путем. Если путь не указан, то предполагается наличие БД в папке местонахождения библиотек sqlite.dll и sqlite.net.dll. Допускается указание имени файла в фомате URI, т.е. имя может начинаться с префикса "file://". Если БД открылась, метод возвращает 0, иначе — код ошибки.
