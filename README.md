@@ -93,7 +93,7 @@ SQLite = CreateObject('COM.SQLite'+iif(sys(17)='Pentium','32',''))
 * СОЗДАНИЕ ТАБЛИЦЫ И ДОБАВЛЕНИЕ ЗАПИСЕЙ
 * CREATING A TABLE AND ADDING RECORDS
 FUNCTION Test1
-  SQLite = CreateO('COM.SQLite32'+iif(sys(17)='Pentium','32',''))
+  SQLite = CreateO('COM.SQLite'+iif(sys(17)='Pentium','32',''))
 
   if SQLite.Open('test.db')<>0
      return 1
@@ -130,7 +130,7 @@ RETURN 0
 * ТОЖЕ САМОЕ, НО С ИСПОЛЬЗОВАНИЕМ МАССИВА ПАРАМЕТРОВ
 * THE SAME, BUT USING AN ARRAY OF PARAMETERS
 FUNCTION Test2
-  SQLite = CreateO('COM.SQLite32'+iif(sys(17)='Pentium','32',''))
+  SQLite = CreateO('COM.SQLite'+iif(sys(17)='Pentium','32',''))
 
   * Указываем тип массива параметров с нулевого элемента для COM-объекта SQLite:
   * Specify the parameter array type with a zero element for the SQLite COM object:
@@ -167,7 +167,7 @@ RETURN 0
 * ТОЖЕ САМОЕ НО С ИСПОЛЬЗОВАНИЕМ ТРАНЗАКЦИИ
 * THE SAME BUT USING A TRANSACTION
 FUNCTION Test3
-  SQLite = CreateO('COM.SQLite32'+iif(sys(17)='Pentium','32',''))
+  SQLite = CreateO('COM.SQLite'+iif(sys(17)='Pentium','32',''))
 
   if SQLite.Open('test.db')<>0
      return 10
