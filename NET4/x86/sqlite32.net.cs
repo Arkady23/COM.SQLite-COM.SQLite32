@@ -1,7 +1,7 @@
 //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 //!!!                                                   !!!
 //!!!  SQLite32.net на C#.        Автор: A.Б.Корниенко  !!!
-//!!!  v0.0.0.0                             18.04.2025  !!!
+//!!!  v0.1.0.0                             24.03.2026  !!!
 //!!!                                                   !!!
 //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -36,47 +36,47 @@ namespace sqlite {
 //    Array a;
     Task ts;
 
-    // Используемые методы в sqlite3.dll
-    [DllImport("sqlite3.dll")]
+    // Используемые методы в sqlite3.dll/winsqlite3.dll
+    [DllImport("winsqlite3.dll")]
     internal static extern int sqlite3_open_v2(string db, out IntPtr p_db, int rw, string vfs);
-    [DllImport("sqlite3.dll")]
+    [DllImport("winsqlite3.dll")]
     internal static extern int sqlite3_close_v2(IntPtr p_db);
-    [DllImport("sqlite3.dll")]
+    [DllImport("winsqlite3.dll")]
     internal static extern int sqlite3_prepare_v2(IntPtr p_db, string sql, int nbyte,
              out IntPtr p_smt, out IntPtr p_tail);
-    [DllImport("sqlite3.dll")]
+    [DllImport("winsqlite3.dll")]
     internal static extern int sqlite3_step(IntPtr p_smt);
-    [DllImport("sqlite3.dll")]
+    [DllImport("winsqlite3.dll")]
     internal static extern int sqlite3_column_count(IntPtr p_smt);
-    [DllImport("sqlite3.dll")]
+    [DllImport("winsqlite3.dll")]
     internal static extern int sqlite3_column_type(IntPtr p_smt, int iCol);
-    [DllImport("sqlite3.dll")]
+    [DllImport("winsqlite3.dll")]
     internal static extern IntPtr sqlite3_column_int(IntPtr p_smt, int iCol);
-    [DllImport("sqlite3.dll")]
+    [DllImport("winsqlite3.dll")]
     internal static extern IntPtr sqlite3_column_int64(IntPtr p_smt, int iCol);
-    [DllImport("sqlite3.dll")]
+    [DllImport("winsqlite3.dll")]
     internal static extern IntPtr sqlite3_column_text(IntPtr p_smt, int iCol);
-    [DllImport("sqlite3.dll")]
+    [DllImport("winsqlite3.dll")]
     internal static extern IntPtr sqlite3_column_blob(IntPtr p_smt, int iCol);
-    [DllImport("sqlite3.dll")]
+    [DllImport("winsqlite3.dll")]
     internal static extern int sqlite3_column_bytes(IntPtr p_smt, int iCol);
-    [DllImport("sqlite3.dll")]
+    [DllImport("winsqlite3.dll")]
     internal static extern int sqlite3_finalize(IntPtr p_smt);
-    [DllImport("sqlite3.dll")]
+    [DllImport("winsqlite3.dll")]
     internal static extern int sqlite3_bind_blob(IntPtr p_smt, int i1,
              byte[] b, int nb, int p_void);
-    [DllImport("sqlite3.dll")]
+    [DllImport("winsqlite3.dll")]
     internal static extern int sqlite3_bind_text(IntPtr p_smt, int i1,
              string s, int nb, int p_void);
-    [DllImport("sqlite3.dll")]
+    [DllImport("winsqlite3.dll")]
     internal static extern int sqlite3_bind_null(IntPtr p_smt, int i1);
-    [DllImport("sqlite3.dll")]
+    [DllImport("winsqlite3.dll")]
     internal static extern int sqlite3_bind_double(IntPtr p_smt, int i1, double d);
-    [DllImport("sqlite3.dll")]
+    [DllImport("winsqlite3.dll")]
     internal static extern int sqlite3_bind_int64(IntPtr p_smt, int i1, double i64);
-    [DllImport("sqlite3.dll")]
+    [DllImport("winsqlite3.dll")]
     internal static extern int sqlite3_bind_int(IntPtr p_smt, int i1, int i);
-    [DllImport("sqlite3.dll")]
+    [DllImport("winsqlite3.dll")]
     internal static extern int sqlite3_complete(string sql);
 
     // Открьть БД
