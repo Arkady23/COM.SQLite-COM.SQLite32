@@ -1,7 +1,7 @@
 //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 //!!!                                                   !!!
 //!!!  SQLite.net на C#.          Автор: A.Б.Корниенко  !!!
-//!!!  v0.1.0.0                             24.03.2026  !!!
+//!!!  v0.2.0.0                             13.11.2026  !!!
 //!!!                                                   !!!
 //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -10,9 +10,14 @@ using System.Text;
 using System.Globalization;
 using System.Threading.Tasks;
 using System.Runtime.InteropServices;
+using System.Runtime.CompilerServices;
+
 
 namespace sqlite {
 
+  [ComVisible(true)]
+  // НОВЫЙ уникальный GUID для класса COM.SQLite (x64)
+  [Guid("5D2E8F1A-3A6C-4B90-9E11-7D4F5E6A7B8C")]
   [ClassInterface(ClassInterfaceType.None)]
 //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   [ProgId("COM.SQLite")]    //!!
@@ -31,9 +36,7 @@ namespace sqlite {
     char[] qu = {'"','\''};
     string sql1, sql2;
     bool l2, l3, l4;
-    byte[] b;
-    double d;
-//    Array a;
+    long d;
     Task ts;
 
     // Используемые методы в sqlite3.dll/winsqlite3.dll
@@ -51,9 +54,11 @@ namespace sqlite {
     [DllImport("winsqlite3.dll")]
     internal static extern int sqlite3_column_type(IntPtr p_smt, int iCol);
     [DllImport("winsqlite3.dll")]
-    internal static extern IntPtr sqlite3_column_int(IntPtr p_smt, int iCol);
+    internal static extern int sqlite3_column_int(IntPtr p_smt, int iCol);
     [DllImport("winsqlite3.dll")]
-    internal static extern IntPtr sqlite3_column_int64(IntPtr p_smt, int iCol);
+    internal static extern long sqlite3_column_int64(IntPtr p_smt, int iCol);
+    [DllImport("winsqlite3.dll")]
+    internal static extern double sqlite3_column_double(IntPtr p_smt, int iCol);
     [DllImport("winsqlite3.dll")]
     internal static extern IntPtr sqlite3_column_text(IntPtr p_smt, int iCol);
     [DllImport("winsqlite3.dll")]
@@ -64,7 +69,7 @@ namespace sqlite {
     internal static extern int sqlite3_finalize(IntPtr p_smt);
     [DllImport("winsqlite3.dll")]
     internal static extern int sqlite3_bind_blob(IntPtr p_smt, int i1,
-             byte[] b, int nb, int p_void);
+             IntPtr b, int nb, int p_void);
     [DllImport("winsqlite3.dll")]
     internal static extern int sqlite3_bind_text(IntPtr p_smt, int i1,
              string s, int nb, int p_void);
@@ -73,11 +78,19 @@ namespace sqlite {
     [DllImport("winsqlite3.dll")]
     internal static extern int sqlite3_bind_double(IntPtr p_smt, int i1, double d);
     [DllImport("winsqlite3.dll")]
-    internal static extern int sqlite3_bind_int64(IntPtr p_smt, int i1, double i64);
+    internal static extern int sqlite3_bind_int64(IntPtr p_smt, int i1, long i64);
     [DllImport("winsqlite3.dll")]
     internal static extern int sqlite3_bind_int(IntPtr p_smt, int i1, int i);
     [DllImport("winsqlite3.dll")]
     internal static extern int sqlite3_complete(string sql);
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    unsafe string GetSqliteText(IntPtr stmt) {
+      int len = sqlite3_column_bytes(stmt, iCol);
+      if (len <= 0) return string.Empty;
+      byte* ptr = (byte*)sqlite3_column_text(stmt, iCol);
+      return ptr == null ? string.Empty : vfpw.GetString(ptr, len);
+    }
 
     // Открьть БД
     public int Open(string db, bool read_only = false) {
@@ -109,9 +122,13 @@ namespace sqlite {
       }
     }
 
-    int odd(string z) {
-      return (z.Length - z.Replace("'", "").Length)%2 +
-             (z.Length - z.Replace("\"", "").Length)%2;
+    int odd(string z, int start, int end) {
+      int c1 = 0, c2 = 0;
+      for (int k = start; k < end; k++) {
+        if (z[k] == '\'') c1++;
+        else if (z[k] == '"') c2++;
+      }
+      return (c1 & 1) + (c2 & 1);
     }
 
     void Exec(ref string sql) {
@@ -143,9 +160,13 @@ namespace sqlite {
           ret = sqlite3_prepare_v2(p_db, sql1, k_1, out p_smt, out p_tail);
         }
         if(ret == SQLITE_OK) {
-          sql2 = sql1;          // sql2 для асинхронной задачи ts
-          ise = ise1 = ise2;    // ise1 для асинхронной задачи ts
+          sql2 = sql1;            // sql2 для асинхронной задачи ts
+          ise = ise1 = ise2;      // ise1 для асинхронной задачи ts
+          object[] vals1 = vals;  // Избежать затирания vals в случае нескольких команд
           ts = Task.Run(() => {
+            IntPtr currentSmt= l3? p_smt2 : p_smt;
+            double dVal;
+            object val;
 
             // Определить количество вопросов i2 в команде sql1/sql2
             i1 = i2 = SQLITE_OK;
@@ -154,66 +175,68 @@ namespace sqlite {
               if(i<SQLITE_OK) {
                 i1 = sql2.Length;
               } else {
-                if(odd(sql2.Substring(i1, i-i1))==SQLITE_OK) i2++;
+                if(odd(sql2,i1,i) == SQLITE_OK) i2++;
                 i1 = i+SQLITE3_INTEGER;
               }
             }
 
-            // Проконтролировать наличие параметров в vals
-            if((i2+i3)>vals.Length) i2 = vals.Length - i3;
+            // Проконтролировать наличие параметров в vals1
+            if((i2+i3)>vals1.Length) i2 = vals1.Length - i3;
 
             if(i2>SQLITE_OK) {
               for(iCol=SQLITE3_INTEGER; iCol<=i2; iCol++) {
-                switch(vals[i3].GetType().Name) {
-                case "Int32":
-                  sqlite3_bind_int(l3?p_smt2:p_smt, iCol, (int)vals[i3]);
-                  break;
-                case "Int64":
-                  sqlite3_bind_int64(l3?p_smt2:p_smt, iCol, (double)vals[i3]);
-                  break;
-                case "Float":
-                case "Double":
-                  sqlite3_bind_double(l3?p_smt2:p_smt, iCol, (double)vals[i3]);
-                  break;
-                case "Boolean":
-                  sqlite3_bind_text(l3?p_smt2:p_smt, iCol, ((bool)vals[i3])?"T":"", k_1, k_1);
-                  break;
-                case "DBNull":
-                case "Null":
-                  sqlite3_bind_null(l3?p_smt2:p_smt, iCol);
-                  break;
-                case "String":
-                  sqlite3_bind_text(l3?p_smt2:p_smt, iCol, (string)vals[i3], k_1, k_1);
-                  break;
-                case "Byte[]":
-                  sqlite3_bind_blob(l3?p_smt2:p_smt, iCol, (byte[])vals[i3],
-                                               ((byte[])vals[i3]).Length, k_1);
-                  break;
-                case "Byte[*]":
-                  nb = ((Array)vals[i3]).Length;
-                  b = new byte[nb];
-                  Array.Copy(((Array)vals[i3]), SQLITE3_INTEGER, b, SQLITE_OK, nb);
-                  sqlite3_bind_blob(l3?p_smt2:p_smt, iCol, b, nb, SQLITE_OK);
-                  break;
+                val= vals1[i3];
+                if(val == null || val is DBNull) {
+                  sqlite3_bind_null(currentSmt, iCol);
+                } else {
+                  switch(Type.GetTypeCode(val.GetType())) {
+                  case TypeCode.Int32:
+                    sqlite3_bind_int(currentSmt, iCol, (int)val);
+                    break;
+                  case TypeCode.Int64:
+                    sqlite3_bind_int64(currentSmt, iCol, (long)val);
+                    break;
+                  case TypeCode.Single:
+                  case TypeCode.Double:
+                  case TypeCode.Decimal:
+                    dVal = Convert.ToDouble(val);
+                    if(dVal % 1 == 0 && dVal >= long.MinValue && dVal <= long.MaxValue) {
+                      sqlite3_bind_int64(currentSmt, iCol, (long)dVal);
+                    } else {
+                      sqlite3_bind_double(currentSmt, iCol, dVal);
+                    }
+                    break;
+                  case TypeCode.Boolean:
+                    sqlite3_bind_text(currentSmt, iCol, ((bool)val)? "T" : "", k_1, k_1);
+                    break;
+                  case TypeCode.String:
+                    sqlite3_bind_text(currentSmt, iCol, (string)val, k_1, k_1);
+                    break;
+                  default:
+                    Array array = val as Array; // Обрабатывает и byte[], и COM-массивы Byte[*]
+                    if(array != null) {
+                      GCHandle handle = GCHandle.Alloc(array, GCHandleType.Pinned);
+                      try {
+                        sqlite3_bind_blob(currentSmt, iCol, handle.AddrOfPinnedObject(),
+                                          array.Length, k_1);
+                      } finally {
+                        handle.Free();
+                      }
+                    }
+                    break;
+                  }
                 }
                 i3++;
               }
             }
-            ret2 = sqlite3_step(l3?p_smt2:p_smt);
-            if(ise1 == nSql) Step2(l3?p_smt2:p_smt);
+            ret2 = sqlite3_step(currentSmt);
+            if(ise1 == nSql) Step2(currentSmt);
           });
         } else {
           ise2 = nSql;
         }
       } while (ise2<nSql);
       if(!l4) ret2 = ret1;
-    }
-
-    // Вынесено т.к. используестя в 2-х местах. Для чтения текста и полей Double
-    void SqlToText1() {
-      nb = sqlite3_column_bytes(p_smt, iCol);
-      b = new byte[nb];
-      Marshal.Copy((IntPtr)sqlite3_column_text(p_smt, iCol), b, SQLITE_OK, nb);
     }
 
     // Вызов из Next
@@ -231,78 +254,51 @@ namespace sqlite {
         l4 = true;
         nc = sqlite3_column_count(p_smt);
         if(l2) {
-          aret2 = new object[nc];
+          if (aret2 == null || aret2.Length != nc) aret2 = new object[nc];
         } else {
-          aret = new object[nc];
+          if (aret == null || aret.Length != nc) aret = new object[nc];
         }
         for(iCol = SQLITE_OK; iCol < nc; iCol++) {
           switch(sqlite3_column_type(p_smt, iCol)) {
           case 1:   // SQLITE3_INTEGER
-            if(sqlite3_column_bytes(p_smt, iCol)<10) {
+            d = sqlite3_column_int64(p_smt, iCol);
+            if(d >= int.MinValue && d <= int.MaxValue) {
               if(l2) {
-                aret2[iCol] = (int)sqlite3_column_int(p_smt, iCol);
+                aret2[iCol] = (int)d;
               } else {
-                aret[iCol] = (int)sqlite3_column_int(p_smt, iCol);
+                aret[iCol] = (int)d;
               }
             } else {
               if(l2) {
-                aret2[iCol] = (double)sqlite3_column_int64(p_smt, iCol);
+                aret2[iCol] = (double)d;
               } else {
-                aret[iCol] = (double)sqlite3_column_int64(p_smt, iCol);
+                aret[iCol] = (double)d;
               }
             }
             break;
           case 2:   // SQLITE3_FLOAT
-            // Double не извлекается из SQLite3 (баг). Обходной путь через текст.
-
-            // Использовать: Double.TryParse().
-            // Безопасная альтернатива Double.Parse(), так как при неудачном
-            // преобразовании не возникает исключение. Метод возвращает логическое
-            // значение, указывающее на успех преобразования.
-            //              Convert.ToDouble().
-            // Может обрабатывать пустые строки и возвращает 0 при неудачном
-            // преобразовании.
-            SqlToText1();
-            string dStr = vfpw.GetString(b).Replace(',','.');
-            if(!Double.TryParse(dStr, NumberStyles.Any,
-                CultureInfo.InvariantCulture, out d)) {
-              try{ 
-                d = Convert.ToDouble(dStr);
-              } catch(Exception) {
-                d = 0;
-              }
-            }
-
             if(l2) {
-              aret2[iCol] = d;
+              aret2[iCol] = sqlite3_column_double(p_smt, iCol);
             } else {
-              aret[iCol] = d;
+              aret[iCol] = sqlite3_column_double(p_smt, iCol);
             }
             break;
           case 3:   // SQLITE3_TEXT
-            SqlToText1();
             if(l2) {
-              aret2[iCol] = vfpw.GetString(b);
+              aret2[iCol] = GetSqliteText(p_smt);
             } else {
-              aret[iCol] = vfpw.GetString(b);
+              aret[iCol] = GetSqliteText(p_smt);
             }
             break;
           case 5:   // SQLITE3_NULL
             if(l2) {
-              aret2[iCol] = null;
+              aret2[iCol] = DBNull.Value;
             } else {
-              aret[iCol] = null;
+              aret[iCol] = DBNull.Value;
             }
             break;
           default:  // SQLITE3_BLOB
             nb = sqlite3_column_bytes(p_smt, iCol);
-
-//            // Танцы с бубном для формирования массива с индекса 1
-//            b = new byte[nb];
-//            a = Array.CreateInstance(typeof(byte), new[] { nb }, new[] { 1 });
-//            Marshal.Copy(inPt, b, 0, nb);
-//            Array.Copy(b, 0, a, 1, nb);
-//            aret[iCol] = a;
 
             // Работает с нормальным массивом
             if(l2) {
