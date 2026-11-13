@@ -89,6 +89,8 @@ SQLite = CreateObject('COM.SQLite'+iif(sys(17)='Pentium','32',''))
   ? "Test 3: " + tran(Test3())
   ? "Test 4: " + tran(Test4())
   ? "Test 5: " + tran(Test5())
+  ? "Test 6: " + tran(Test6())
+  ? "Test 7: " + tran(Test7())
 
 * СОЗДАНИЕ ТАБЛИЦЫ И ДОБАВЛЕНИЕ ЗАПИСЕЙ
 * CREATING A TABLE AND ADDING RECORDS
@@ -227,15 +229,126 @@ FUNCTION Test4
 
 RETURN 0
 
-* СЖАТИЕ И КОПИРОВАНИЕ БД
-* COMPRESSION AND COPYING OF THE DB
+* ПРОВЕРКА РАЗНЫХ ТИПОВ ДАННЫХ (DOUBLE/REAL, BOOL, NULL, INT64, DATETIME)
+* TESTING DIFFERENT DATA TYPES
 FUNCTION Test5
+  LOCAL SQLite, nVal, lVal, dVal, nBig
   SQLite = CreateO('COM.SQLite'+iif(sys(17)='Pentium','32',''))
-  bak = 'sqlite.test.db.bak'
-  backup = 'sqlite.test.db'
 
   if SQLite.Open('test.db')<>0
      return 19
+  endif
+
+  * Создаём таблицу с разными типами колонок
+  if SQLite.DoCmd("DROP TABLE IF EXISTS types_test;" + ;
+           "CREATE TABLE types_test (" + ;
+           "id INTEGER PRIMARY KEY AUTOINCREMENT, " + ;
+           "f_double DOUBLE, " + ;
+           "f_real REAL, " + ;
+           "f_bool BOOLEAN, " + ;
+           "f_big INTEGER, " + ;
+           "f_date TEXT, " + ;
+           "f_null TEXT)")<>0
+     return 20
+  endif
+
+  * Тестовые значения из VFP
+  nVal = 12345.67890123   && Дробное число высокой точности
+  lVal = .T.              && Логическое значение
+  nBig = 9876543210123    && Большое целое (больше 32-битного INT)
+  dVal = DATETIME(2026, 11, 13, 13, 46, 00)
+
+  * Записываем данные через параметры
+  if SQLite.DoCmd("INSERT INTO types_test (f_double, f_real, f_bool, f_big, f_date, f_null) " + ;
+           "VALUES (?, ?, ?, ?, ?, ?)", ;
+           m.nVal, -0.000456, m.lVal, m.nBig, TTOC(m.dVal, 3), .NULL.)<>0
+     return 21
+  endif
+
+  * Читаем обратно и проверяем типы и значения
+  if SQLite.DoCmd("SELECT f_double, f_real, f_bool, f_big, f_date, f_null FROM types_test")<>0
+     return 22
+  endif
+
+  if SQLite.Eof()=0
+     arec = SQLite.Next()
+     ? "--- Проверка типов ---"
+     ? "DOUBLE:   ", arec(1), "| Тип VFP:", VARTYPE(arec(1)), "| Разница:", ABS(arec(1) - m.nVal)
+     ? "REAL:     ", arec(2), "| Тип VFP:", VARTYPE(arec(2))
+     ? "BOOL:     ", arec(3), "| Тип VFP:", VARTYPE(arec(3))
+     ? "INT64:    ", arec(4), "| Тип VFP:", VARTYPE(arec(4))
+     ? "DATETIME: ", arec(5), "| Тип VFP:", VARTYPE(arec(5))
+     ? "NULL:     ", arec(6), "| Тип VFP:", VARTYPE(arec(6)), "| ISNULL:", ISNULL(arec(6))
+
+     * Проверяем, что Double вернулся именно как число (N) и без потери точности
+     if VARTYPE(arec(1)) <> 'N' OR ABS(arec(1) - m.nVal) > 0.0000001
+        SQLite.Close()
+        return 23
+     endif
+  else
+     SQLite.Close()
+     return 24
+  endif
+  ?
+
+  if SQLite.Close()<>0
+     return 25
+  endif
+
+RETURN 0
+
+* ПРОВЕРКА ЗАПИСИ И ЧТЕНИЯ BLOB
+* BLOB WRITE AND READ VERIFICATION
+FUNCTION Test6
+  LOCAL SQLite, cBinIn, cBinOut
+  SQLite = CreateO('COM.SQLite'+iif(sys(17)='Pentium','32',''))
+
+  if SQLite.Open('test.db')<>0
+     return 29
+  endif
+
+  if SQLite.DoCmd("DROP TABLE IF EXISTS blob_test; CREATE TABLE blob_test (data BLOB)")<>0
+     return 30
+  endif
+
+  * Формируем бинарные данные (включая нулевой байт CHR(0) и символы > 127)
+  cBinIn = CREATEBINARY("PNG" + CHR(0) + CHR(1) + CHR(255) + "TestBlobData")
+
+  if SQLite.DoCmd("INSERT INTO blob_test (data) VALUES (?)", m.cBinIn)<>0
+     return 31
+  endif
+
+  if SQLite.DoCmd("SELECT data FROM blob_test")<>0
+     return 32
+  endif
+
+  if SQLite.Eof()=0
+     arec = SQLite.Next()
+     cBinOut = arec(1)
+     ? "--- Проверка BLOB ---"
+     ? "Тип VFP:", VARTYPE(m.cBinOut), "| Длина:", LEN(m.cBinOut), "| Совпадает:", (m.cBinIn == m.cBinOut)
+     if VARTYPE(m.cBinOut) <> 'Q' OR !(m.cBinIn == m.cBinOut)
+        SQLite.Close()
+        return 33
+     endif
+  endif
+  ?
+
+  if SQLite.Close()<>0
+     return 34
+  endif
+
+RETURN 0
+
+* СЖАТИЕ И КОПИРОВАНИЕ БД
+* COMPRESSION AND COPYING OF THE DB
+FUNCTION Test7
+  SQLite = CreateO('COM.SQLite'+iif(sys(17)='Pentium','32',''))
+  bak = 'bak.test.db.bak'
+  backup = 'bak.test.db'
+
+  if SQLite.Open('test.db')<>0
+     return 26
   endif
 
   if file(m.bak)
@@ -246,11 +359,11 @@ FUNCTION Test5
   endif
 
   if SQLite.DoCmd("VACUUM INTO ?",m.backup)<>0
-     return 20
+     return 27
   endif
 
   if SQLite.Close()<>0
-     return 21
+     return 28
   endif
 
 RETURN 0
@@ -260,3 +373,4 @@ RETURN 0
 ### История версий
 0.0.0.0. 18.04.2025. Опубликована первая рабочая версия.  
 0.1.0.0. 24.03.2026. Теперь используется встроенная в Windows10/11 winsqlite3.dll.  
+0.2.0.0. 13.11.2026. Исправлено прямое чтение чисел с плавающей точкой (Double/Real), добавлен возврат системного .NULL., устранена гонка потоков при быстрой смене запросов с параметрами, оптимизирована работа с памятью (чтение строк и прямая передача BLOB без промежуточного копирования). Спасибо ИИ.  
